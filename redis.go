@@ -241,7 +241,7 @@ func (c *baseClient) initConn(ctx context.Context, cn *pool.Conn) error {
 		return nil
 	}
 
-	connPool := pool.NewSingleConnPool(nil)
+	connPool := pool.NewSingleConnPool(c.connPool)
 	connPool.SetConn(cn)
 	conn := newConn(ctx, c.opt, connPool)
 

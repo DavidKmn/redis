@@ -31,8 +31,7 @@ func (e BadConnError) Unwrap() error {
 }
 
 type SingleConnPool struct {
-	pool  Pooler
-	level int32 // atomic
+	pool Pooler
 
 	state uint32 // atomic
 	ch    chan *Conn
@@ -43,15 +42,10 @@ type SingleConnPool struct {
 var _ Pooler = (*SingleConnPool)(nil)
 
 func NewSingleConnPool(pool Pooler) *SingleConnPool {
-	p, ok := pool.(*SingleConnPool)
-	if !ok {
-		p = &SingleConnPool{
-			pool: pool,
-			ch:   make(chan *Conn, 1),
-		}
+	return &SingleConnPool{
+		pool: pool,
+		ch:   make(chan *Conn, 1),
 	}
-	atomic.AddInt32(&p.level, 1)
-	return p
 }
 
 func (p *SingleConnPool) SetConn(cn *Conn) {
@@ -150,8 +144,7 @@ func (p *SingleConnPool) Stats() *Stats {
 }
 
 func (p *SingleConnPool) Close() error {
-	level := atomic.AddInt32(&p.level, -1)
-	if level > 0 {
+	if _, ok := p.pool.(*SingleConnPool); ok {
 		return nil
 	}
 
