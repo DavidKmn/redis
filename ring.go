@@ -471,9 +471,9 @@ func (c *Ring) Len() int {
 
 // Subscribe subscribes the client to the specified channels.
 func (c *Ring) Subscribe(ctx context.Context, channels ...string) *PubSub {
-	if len(channels) == 0 {
-		panic("at least one channel is required")
-	}
+// 	if len(channels) == 0 {
+// 		panic("at least one channel is required")
+// 	}
 
 	shard, err := c.shards.GetByKey(channels[0])
 	if err != nil {
